@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lead } from '../types/lead';
 import { leadsApi, industryApi, headcountApi } from '../services/api';
@@ -15,29 +15,7 @@ export const LeadsListPage: React.FC = () => {
   const [selectedHeadcount, setSelectedHeadcount] = useState<string>('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchOptions();
-    fetchLeads();
-  }, []);
-
-  useEffect(() => {
-    fetchLeads();
-  }, [selectedIndustry, selectedHeadcount]);
-
-  const fetchOptions = async () => {
-    try {
-      const [industries, headcounts] = await Promise.all([
-        industryApi.getOptions(),
-        headcountApi.getOptions(),
-      ]);
-      setIndustryOptions(industries);
-      setHeadcountOptions(headcounts);
-    } catch (err) {
-      console.error('Failed to load filter options:', err);
-    }
-  };
-
-  const fetchLeads = async () => {
+  const fetchLeads = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
@@ -60,7 +38,28 @@ export const LeadsListPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedIndustry, selectedHeadcount]);
+
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const [industries, headcounts] = await Promise.all([
+          industryApi.getOptions(),
+          headcountApi.getOptions(),
+        ]);
+        setIndustryOptions(industries);
+        setHeadcountOptions(headcounts);
+      } catch (err) {
+        console.error('Failed to load filter options:', err);
+      }
+    };
+    
+    fetchOptions();
+  }, []);
+
+  useEffect(() => {
+    fetchLeads();
+  }, [fetchLeads]);  
 
   const handleIndustryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedIndustry(e.target.value);
