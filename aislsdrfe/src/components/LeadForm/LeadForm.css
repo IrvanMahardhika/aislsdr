@@ -22,7 +22,8 @@
   color: #e74c3c;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
@@ -31,13 +32,15 @@
   box-sizing: border-box;
 }
 
-.form-group input:focus {
+.form-group input:focus,
+.form-group select:focus {
   outline: none;
   border-color: #4a90e2;
   box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
 }
 
-.form-group input.error {
+.form-group input.error,
+.form-group select.error {
   border-color: #e74c3c;
 }
 

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LeadCreate } from '../../types/lead';
+import { industryApi } from '../../services/api';
 import './LeadForm.css';
 
 interface LeadFormProps {
@@ -25,6 +26,24 @@ export const LeadForm: React.FC<LeadFormProps> = ({
 
   const [errors, setErrors] = useState<Partial<Record<keyof LeadCreate, string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [industryOptions, setIndustryOptions] = useState<string[]>([]);
+  const [isLoadingIndustries, setIsLoadingIndustries] = useState(false);
+
+  useEffect(() => {
+    const fetchIndustryOptions = async () => {
+      setIsLoadingIndustries(true);
+      try {
+        const options = await industryApi.getOptions();
+        setIndustryOptions(options);
+      } catch (error) {
+        console.error('Error fetching industry options:', error);
+      } finally {
+        setIsLoadingIndustries(false);
+      }
+    };
+
+    fetchIndustryOptions();
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -53,8 +72,12 @@ export const LeadForm: React.FC<LeadFormProps> = ({
       newErrors.email = 'Invalid email format';
     }
 
-    if (formData.headcount !== undefined && formData.headcount < 0) {
-      newErrors.headcount = 'Headcount must be a positive number';
+    if (formData.headcount !== undefined) {
+      if (formData.headcount < 0) {
+        newErrors.headcount = 'Headcount must be a positive number';
+      } else if (formData.headcount > 100) {
+        newErrors.headcount = 'Headcount must be between 0 and 100';
+      }
     }
 
     setErrors(newErrors);
@@ -155,13 +178,24 @@ export const LeadForm: React.FC<LeadFormProps> = ({
 
       <div className="form-group">
         <label htmlFor="industry">Industry</label>
-        <input
-          type="text"
+        <select
           id="industry"
           name="industry"
           value={formData.industry}
           onChange={handleChange}
-        />
+          disabled={isLoadingIndustries}
+          className={errors.industry ? 'error' : ''}
+        >
+          <option value="">Select an industry</option>
+          {industryOptions.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+        {errors.industry && (
+          <span className="error-message">{errors.industry}</span>
+        )}
       </div>
 
       <div className="form-group">
@@ -173,6 +207,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({
           value={formData.headcount || ''}
           onChange={handleChange}
           min="0"
+          max="100"
           className={errors.headcount ? 'error' : ''}
         />
         {errors.headcount && (

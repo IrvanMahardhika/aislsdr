@@ -10,6 +10,7 @@ export const leadsApi = {
     email?: string;
     company?: string;
     industry?: string;
+    headcount?: string;
   }): Promise<Lead[]> => {
     const queryParams = new URLSearchParams();
     if (params) {
@@ -45,5 +46,25 @@ export const leadsApi = {
   createMultiple: async (leads: LeadCreate[]): Promise<Lead[]> => {
     const promises = leads.map(lead => leadsApi.create(lead));
     return Promise.all(promises);
+  },
+};
+
+export const industryApi = {
+  getOptions: async (): Promise<string[]> => {
+    const response = await fetch(`${API_BASE_URL}/industry/options`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch industry options');
+    }
+    return response.json();
+  },
+};
+
+export const headcountApi = {
+  getOptions: async (): Promise<string[]> => {
+    const response = await fetch(`${API_BASE_URL}/headcount/options`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch headcount options');
+    }
+    return response.json();
   },
 };
