@@ -16,7 +16,7 @@ def get_leads(
     name: Optional[str] = None,
     email: Optional[str] = None,
     company: Optional[str] = None,
-    status: Optional[str] = None
+    industry: Optional[str] = None
 ) -> List[Lead]:
     """Get leads with optional filtering."""
     query = db.query(Lead)
@@ -28,11 +28,11 @@ def get_leads(
         query = query.filter(Lead.email.ilike(f"%{email}%"))
     if company:
         query = query.filter(Lead.company.ilike(f"%{company}%"))
-    if status:
-        query = query.filter(Lead.status == status)
+    if industry:
+        query = query.filter(Lead.industry.ilike(f"%{industry}%"))
     
     # Apply pagination and ordering
-    return query.order_by(Lead.created_at.desc()).offset(skip).limit(limit).all()
+    return query.order_by(Lead.id.desc()).offset(skip).limit(limit).all()
 
 def create_lead(db: Session, lead: LeadCreate) -> Lead:
     """Create a new lead."""
@@ -50,19 +50,20 @@ def create_lead(db: Session, lead: LeadCreate) -> Lead:
 def get_leads_summary(db: Session) -> dict:
     """Get summary statistics of leads."""
     total = db.query(Lead).count()
-    by_status = {}
+    by_industry = {}
     
-    # Get distinct statuses and their counts
-    status_counts = (
-        db.query(Lead.status, func.count(Lead.id))
-        .group_by(Lead.status)
+    # Get distinct industries and their counts
+    industry_counts = (
+        db.query(Lead.industry, func.count(Lead.id))
+        .filter(Lead.industry.isnot(None))
+        .group_by(Lead.industry)
         .all()
     )
     
-    for status, count in status_counts:
-        by_status[status] = count
+    for industry, count in industry_counts:
+        by_industry[industry] = count
     
     return {
         "total_leads": total,
-        "by_status": by_status
+        "by_industry": by_industry
     }

@@ -15,7 +15,7 @@ def list_leads(
     name: Optional[str] = Query(None, description="Filter by name (partial match)"),
     email: Optional[str] = Query(None, description="Filter by email (partial match)"),
     company: Optional[str] = Query(None, description="Filter by company (partial match)"),
-    status: Optional[str] = Query(None, description="Filter by status (exact match)"),
+    industry: Optional[str] = Query(None, description="Filter by industry (partial match)"),
     db: Session = Depends(get_db)
 ):
     """
@@ -25,7 +25,7 @@ def list_leads(
     - name: partial match
     - email: partial match
     - company: partial match
-    - status: exact match
+    - industry: partial match
     """
     return get_leads(
         db=db,
@@ -34,7 +34,7 @@ def list_leads(
         name=name,
         email=email,
         company=company,
-        status=status
+        industry=industry
     )
 
 @router.get("/{lead_id}", response_model=LeadResponse)
