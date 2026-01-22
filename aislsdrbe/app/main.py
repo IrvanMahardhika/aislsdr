@@ -4,7 +4,12 @@ from .database import init_db
 from .routers import leads, industry, headcount
 
 # Initialize database tables
-init_db()
+try:
+    init_db()
+except Exception as e:
+    # Log error but don't fail startup
+    # In production, tables should already exist
+    print(f"Database initialization note: {e}")
 
 app = FastAPI(
     title="Leads API",
