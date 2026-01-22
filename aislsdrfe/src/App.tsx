@@ -1,25 +1,20 @@
 import React from 'react';
-import logo from './logo.svg';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { LeadsListPage } from './pages/LeadsListPage';
+import { AddLeadPage } from './pages/AddLeadPage';
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<Navigate to="/leads" replace />} />
+          <Route path="/leads" element={<LeadsListPage />} />
+          <Route path="/add-lead" element={<AddLeadPage />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
