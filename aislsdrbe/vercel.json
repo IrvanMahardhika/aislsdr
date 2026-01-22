@@ -9,9 +9,14 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/api/index.py"
+      "dest": "api/index.py"
     }
   ],
+  "functions": {
+    "api/index.py": {
+      "runtime": "python3.11"
+    }
+  },
   "env": {
     "PYTHON_VERSION": "3.11"
   }
