@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import init_db
-from .routers import leads
+from .routers import leads, industry
 
 # Initialize database tables
 init_db()
@@ -23,6 +23,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(leads.router)
+app.include_router(industry.router)
 
 @app.get("/")
 def read_root():
