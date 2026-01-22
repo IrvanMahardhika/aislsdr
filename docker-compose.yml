@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./aislsdrbe
+      dockerfile: Dockerfile
+    container_name: aislsdr-backend
+    ports:
+      - "8000:80"
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - aislsdr-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./aislsdrfe
+      dockerfile: Dockerfile
+    container_name: aislsdr-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - aislsdr-network
+    restart: unless-stopped
+
+networks:
+  aislsdr-network:
+    driver: bridge
