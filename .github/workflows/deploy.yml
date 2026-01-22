@@ -75,4 +75,6 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_BACKEND_PROJECT_ID }}
           vercel-args: '--prod'
+          vercel-env: |
+            POSTGRES_URL=${{ secrets.POSTGRES_URL }}
           working-directory: ./aislsdrbe
