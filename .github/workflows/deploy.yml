@@ -69,6 +69,7 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install mangum
+          pip install --force-reinstall typing-extensions==4.5.0
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
