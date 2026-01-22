@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 from typing import Optional
 
 class LeadCreate(BaseModel):
@@ -11,6 +11,8 @@ class LeadCreate(BaseModel):
     industry: Optional[str] = None
 
 class LeadResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
     name: str
     job_title: Optional[str]
@@ -19,9 +21,6 @@ class LeadResponse(BaseModel):
     email: str
     headcount: Optional[int]
     industry: Optional[str]
-    
-    class Config:
-        from_attributes = True
 
 class LeadSummary(BaseModel):
     total_leads: int

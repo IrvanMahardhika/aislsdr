@@ -3,6 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from .database import init_db
 from .routers import leads, industry, headcount
 
+# Import models to ensure they're registered with Base before init_db() is called
+from . import models  # This ensures Lead model is registered with Base
+
 # Initialize database tables
 try:
     init_db()
