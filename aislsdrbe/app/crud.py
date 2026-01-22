@@ -16,7 +16,8 @@ def get_leads(
     name: Optional[str] = None,
     email: Optional[str] = None,
     company: Optional[str] = None,
-    industry: Optional[str] = None
+    industry: Optional[str] = None,
+    headcount: Optional[str] = None
 ) -> List[Lead]:
     """Get leads with optional filtering."""
     query = db.query(Lead)
@@ -30,6 +31,20 @@ def get_leads(
         query = query.filter(Lead.company.ilike(f"%{company}%"))
     if industry:
         query = query.filter(Lead.industry.ilike(f"%{industry}%"))
+    if headcount:
+        # Parse headcount range string (e.g., "1 - 10" -> min=1, max=10)
+        try:
+            parts = headcount.split(" - ")
+            if len(parts) == 2:
+                min_headcount = int(parts[0].strip())
+                max_headcount = int(parts[1].strip())
+                query = query.filter(
+                    Lead.headcount >= min_headcount,
+                    Lead.headcount <= max_headcount
+                )
+        except (ValueError, AttributeError):
+            # If parsing fails, ignore the filter
+            pass
     
     # Apply pagination and ordering
     return query.order_by(Lead.id.desc()).offset(skip).limit(limit).all()
